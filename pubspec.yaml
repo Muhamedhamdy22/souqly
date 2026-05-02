@@ -1,0 +1,53 @@
+name: souqly
+description: "A new Flutter project."
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ^3.3.4
+
+dependencies:
+  cached_network_image:
+  carousel_slider_plus:
+  flutter:
+    sdk: flutter
+  flutter_screenutil:
+  flutter_slidable:
+  auto_size_text:
+  colornames:
+  flutter_svg:
+  flutter_native_splash:
+  readmore:
+  smooth_page_indicator:
+  dio: ^5.9.2
+  injectable: ^2.7.1+4
+  get_it: ^9.2.1
+  bloc: ^9.2.0
+  flutter_bloc: ^9.1.1
+  pretty_dio_logger: ^1.4.0
+  loader_overlay: ^5.0.0
+  shared_preferences: ^2.5.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints:
+  injectable_generator: ^2.12.1
+  build_runner: ^2.13.1
+
+flutter:
+  generate: true
+  uses-material-design: true
+#  assets:
+#    - assets/images/
+#    - assets/icons/
+
+
+
+#  fonts:
+#    - family: Poppins
+#      fonts:
+#        - asset: assets/fonts/
+#
+
+

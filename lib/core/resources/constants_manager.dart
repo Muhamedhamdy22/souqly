@@ -6,7 +6,7 @@ class AppConstants {
   // -------------------------------------------------------------------------
   // API
   // -------------------------------------------------------------------------
-  static const String baseUrl = "https://your-supermarket-api.com/api/v1";
+  static const String baseUrl = "http://127.0.0.1:8000/api";
 
   // -------------------------------------------------------------------------
   // Shared Preferences Keys

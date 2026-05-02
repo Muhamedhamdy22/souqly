@@ -62,7 +62,7 @@ import 'package:flutter/material.dart';
 import 'package:souqly/core/routes_managers/routes.dart';
 import 'package:souqly/features/auth/presentation/screens/sign_in_screen.dart';
 import 'package:souqly/features/auth/presentation/screens/sign_up_screen.dart';
-// import 'package:souqly/features/main_layout/main_layout.dart';
+import 'package:souqly/features/main_layout/main_layout.dart';
 // import 'package:souqly/features/cart/presentation/screens/cart_screen.dart';
 // import 'package:souqly/features/products/presentation/screens/products_screen.dart';
 // import 'package:souqly/features/product_details/presentation/screens/product_details_screen.dart';
@@ -77,8 +77,7 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => SignUpScreen());
 
       case Routes.mainRoute:
-      // return MaterialPageRoute(builder: (_) => const MainLayout());
-        return unDefinedRoute();
+        return MaterialPageRoute(builder: (_) => const MainLayout());
 
       case Routes.cartRoute:
       // return MaterialPageRoute(builder: (_) => const CartScreen());
@@ -112,4 +111,3 @@ class RouteGenerator {
     );
   }
 }
-

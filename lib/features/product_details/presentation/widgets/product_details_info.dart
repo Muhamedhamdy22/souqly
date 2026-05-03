@@ -7,6 +7,8 @@ class ProductDetailsInfo extends StatelessWidget {
   final num price;
   final num oldPrice;
   final double rating;
+  final String description;
+  final int stock;
 
   const ProductDetailsInfo({
     super.key,
@@ -14,6 +16,8 @@ class ProductDetailsInfo extends StatelessWidget {
     required this.price,
     required this.oldPrice,
     required this.rating,
+    required this.description,
+    required this.stock,
   });
 
   @override
@@ -26,6 +30,8 @@ class ProductDetailsInfo extends StatelessWidget {
           _buildNameAndRating(),
           SizedBox(height: 10.h),
           _buildPriceRow(),
+          SizedBox(height: 12.h),
+          _buildStockRow(),
           SizedBox(height: 16.h),
           _buildQuantityRow(),
           SizedBox(height: 16.h),
@@ -65,7 +71,7 @@ class ProductDetailsInfo extends StatelessWidget {
               ),
               SizedBox(width: 3.w),
               Text(
-                rating.toString(),
+                rating.toStringAsFixed(1),
                 style: TextStyle(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w600,
@@ -80,8 +86,9 @@ class ProductDetailsInfo extends StatelessWidget {
   }
 
   Widget _buildPriceRow() {
-    final discount =
-    (((oldPrice - price) / oldPrice) * 100).toStringAsFixed(0);
+    final discount = oldPrice > 0
+        ? (((oldPrice - price) / oldPrice) * 100).toStringAsFixed(0)
+        : '0';
 
     return Row(
       children: [
@@ -94,28 +101,55 @@ class ProductDetailsInfo extends StatelessWidget {
           ),
         ),
         SizedBox(width: 10.w),
-        Text(
-          '$oldPrice ${AppConstants.currency}',
-          style: TextStyle(
-            fontSize: 14.sp,
-            color: AppConstants.textHint,
-            decoration: TextDecoration.lineThrough,
-          ),
-        ),
-        SizedBox(width: 10.w),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
-          decoration: BoxDecoration(
-            color: AppConstants.errorColor.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(6.r),
-          ),
-          child: Text(
-            '$discount% OFF',
+        if (oldPrice > price) ...[
+          Text(
+            '$oldPrice ${AppConstants.currency}',
             style: TextStyle(
-              fontSize: 10.sp,
-              fontWeight: FontWeight.w600,
-              color: AppConstants.errorColor,
+              fontSize: 14.sp,
+              color: AppConstants.textHint,
+              decoration: TextDecoration.lineThrough,
             ),
+          ),
+          SizedBox(width: 10.w),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
+            decoration: BoxDecoration(
+              color: AppConstants.errorColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(6.r),
+            ),
+            child: Text(
+              '$discount% OFF',
+              style: TextStyle(
+                fontSize: 10.sp,
+                fontWeight: FontWeight.w600,
+                color: AppConstants.errorColor,
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildStockRow() {
+    final bool inStock = stock > 0;
+    return Row(
+      children: [
+        Icon(
+          inStock ? Icons.check_circle_outline : Icons.cancel_outlined,
+          size: 14.sp,
+          color: inStock ? AppConstants.successColor : AppConstants.errorColor,
+        ),
+        SizedBox(width: 4.w),
+        Text(
+          inStock
+              ? '${AppConstants.inStock} ($stock available)'
+              : AppConstants.outOfStock,
+          style: TextStyle(
+            fontSize: 12.sp,
+            color:
+            inStock ? AppConstants.successColor : AppConstants.errorColor,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ],
@@ -171,8 +205,9 @@ class ProductDetailsInfo extends StatelessWidget {
         ),
         SizedBox(height: 8.h),
         Text(
-          'Fresh and high quality product delivered straight to your door. '
-              'Sourced from trusted local farms to ensure the best taste and nutrition.',
+          description.isNotEmpty
+              ? description
+              : 'No description available.',
           style: TextStyle(
             fontSize: 12.sp,
             color: AppConstants.textSecondary,
@@ -203,8 +238,7 @@ class _QuantityButton extends StatelessWidget {
         width: 32.w,
         height: 32.w,
         decoration: BoxDecoration(
-          color:
-          isFilled ? AppConstants.primaryColor : AppConstants.cardBg,
+          color: isFilled ? AppConstants.primaryColor : AppConstants.cardBg,
           borderRadius: BorderRadius.circular(8.r),
           border: Border.all(
             color: isFilled

@@ -5,9 +5,10 @@ import 'package:souqly/features/product_details/presentation/widgets/product_det
 import 'package:souqly/features/product_details/presentation/widgets/product_details_bottom_bar.dart';
 import 'package:souqly/features/product_details/presentation/widgets/product_details_image.dart';
 import 'package:souqly/features/product_details/presentation/widgets/product_details_info.dart';
+import 'package:souqly/features/products/data/models/ProductResponse.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
-  final Map<String, dynamic> product;
+  final Data product;
 
   const ProductDetailsScreen({super.key, required this.product});
 
@@ -25,14 +26,16 @@ class ProductDetailsScreen extends StatelessWidget {
                   children: [
                     SizedBox(height: 8.h),
                     ProductDetailsImage(
-                      emoji: product['emoji'] ?? '🛒',
+                      imageUrl: product.image,
                     ),
                     SizedBox(height: 20.h),
                     ProductDetailsInfo(
-                      name: product['name'] ?? '',
-                      price: product['price'] ?? 0,
-                      oldPrice: product['oldPrice'] ?? 0,
-                      rating: (product['rating'] ?? 0.0).toDouble(),
+                      name: product.name ?? '',
+                      price: double.tryParse(product.price ?? '0') ?? 0,
+                      oldPrice: double.tryParse(product.price ?? '0') ?? 0,
+                      rating: 0.0,
+                      description: product.description ?? '',
+                      stock: product.stock?.quantity ?? 0,
                     ),
                     SizedBox(height: 20.h),
                   ],
@@ -41,7 +44,7 @@ class ProductDetailsScreen extends StatelessWidget {
             ),
             ProductDetailsBottomBar(
               onAddToCart: () {
-                // TODO: context.read<CartCubit>().addToCart(...)
+                // TODO: context.read<CartCubit>().addToCart(product)
               },
             ),
           ],

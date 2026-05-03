@@ -95,7 +95,7 @@ class HomeProductsSection extends StatelessWidget {
           price: _mockProducts[i]['price'],
           oldPrice: _mockProducts[i]['oldPrice'],
           rating: _mockProducts[i]['rating'],
-          emoji: _mockProducts[i]['emoji'],
+          imageUrl: null,
           onTap: () {/* TODO: navigate to product details */},
           onAddToCart: () {/* TODO: context.read<CartCubit>().addToCart(...) */},
         ),

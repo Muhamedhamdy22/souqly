@@ -20,6 +20,18 @@ import 'features/Auth/domain/repo/auth_repo.dart' as _i943;
 import 'features/Auth/domain/usecase/login_use_case.dart' as _i495;
 import 'features/Auth/domain/usecase/register_use_case.dart' as _i573;
 import 'features/Auth/presentation/bloc/auth_bloc.dart' as _i172;
+import 'features/categories/data/datasource/category_ds.dart' as _i568;
+import 'features/categories/data/datasource/category_ds_impl.dart' as _i33;
+import 'features/categories/data/repo/category_repo_impl.dart' as _i950;
+import 'features/categories/domain/repo/category_repo.dart' as _i1031;
+import 'features/categories/domain/usecase/category_use_case.dart' as _i559;
+import 'features/categories/presentation/bloc/category_bloc.dart' as _i2;
+import 'features/products/data/datasource/Product_ds.dart' as _i751;
+import 'features/products/data/datasource/product_ds_impl.dart' as _i870;
+import 'features/products/data/repo/Product_repo_impl.dart' as _i833;
+import 'features/products/domain/repo/product_repo.dart' as _i221;
+import 'features/products/domain/usecase/product_use_case.dart' as _i587;
+import 'features/products/presentation/bloc/product_bloc.dart' as _i276;
 
 extension GetItInjectableX on _i174.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -33,16 +45,32 @@ extension GetItInjectableX on _i174.GetIt {
       environmentFilter,
     );
     gh.lazySingleton<_i795.ApiManager>(() => _i795.ApiManager());
+    gh.factory<_i568.CategoryDs>(
+        () => _i33.CategoryDsImpl(gh<_i795.ApiManager>()));
+    gh.factory<_i751.ProductDs>(
+        () => _i870.ProductDsImpl(gh<_i795.ApiManager>()));
     gh.factory<_i579.AuthDs>(() => _i971.AuthDsImpl(gh<_i795.ApiManager>()));
     gh.factory<_i943.AuthRepo>(() => _i899.AuthRepoImpl(gh<_i579.AuthDs>()));
+    gh.factory<_i221.ProductRepo>(
+        () => _i833.ProductRepoImpl(gh<_i751.ProductDs>()));
+    gh.factory<_i1031.CategoryRepo>(
+        () => _i950.CategoryRepoImpl(gh<_i568.CategoryDs>()));
+    gh.factory<_i587.ProductUseCase>(
+        () => _i587.ProductUseCase(gh<_i221.ProductRepo>()));
     gh.factory<_i495.LoginUseCase>(
         () => _i495.LoginUseCase(gh<_i943.AuthRepo>()));
     gh.factory<_i573.RegisterUseCase>(
         () => _i573.RegisterUseCase(gh<_i943.AuthRepo>()));
+    gh.factory<_i559.CategoryUseCase>(
+        () => _i559.CategoryUseCase(gh<_i1031.CategoryRepo>()));
+    gh.factory<_i276.ProductBloc>(
+        () => _i276.ProductBloc(gh<_i587.ProductUseCase>()));
     gh.factory<_i172.AuthBloc>(() => _i172.AuthBloc(
           gh<_i495.LoginUseCase>(),
           gh<_i573.RegisterUseCase>(),
         ));
+    gh.factory<_i2.CategoryBloc>(
+        () => _i2.CategoryBloc(gh<_i559.CategoryUseCase>()));
     return this;
   }
 }

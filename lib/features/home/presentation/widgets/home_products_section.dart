@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:souqly/core/resources/constants_manager.dart';
-import 'package:souqly/features/home/presentation/widgets/product_card.dart';
+import 'package:souqly/core/widget/product_card.dart';
 
 class HomeProductsSection extends StatelessWidget {
   const HomeProductsSection({super.key});

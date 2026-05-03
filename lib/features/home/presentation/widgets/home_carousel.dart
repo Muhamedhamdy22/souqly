@@ -41,7 +41,7 @@ class _HomeCarouselState extends State<HomeCarousel> {
       children: [
         CarouselSlider(
           options: CarouselOptions(
-            height: 130.h,
+            height: 150.h,
             viewportFraction: 0.9,
             autoPlay: true,
             autoPlayInterval: AppConstants.carouselAutoPlay,
@@ -79,14 +79,14 @@ class _HomeCarouselState extends State<HomeCarousel> {
         children: [
           Expanded(
             child: Padding(
-              padding: EdgeInsets.all(16.w),
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: 8.w, vertical: 3.h),
+                    padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(6.r),
@@ -100,11 +100,13 @@ class _HomeCarouselState extends State<HomeCarousel> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 6.h),
+                  SizedBox(height: 5.h),
                   Text(
                     item.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: 14.sp,
+                      fontSize: 13.sp,
                       fontWeight: FontWeight.w700,
                       color: Colors.white,
                     ),
@@ -112,15 +114,16 @@ class _HomeCarouselState extends State<HomeCarousel> {
                   SizedBox(height: 2.h),
                   Text(
                     item.subtitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: 11.sp,
+                      fontSize: 10.sp,
                       color: Colors.white.withOpacity(0.85),
                     ),
                   ),
                   SizedBox(height: 8.h),
                   Container(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: 12.w, vertical: 5.h),
+                    padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8.r),
@@ -128,7 +131,7 @@ class _HomeCarouselState extends State<HomeCarousel> {
                     child: Text(
                       'Shop Now',
                       style: TextStyle(
-                        fontSize: 10.sp,
+                        fontSize: 9.sp,
                         color: AppConstants.primaryColor,
                         fontWeight: FontWeight.w600,
                       ),
@@ -149,7 +152,7 @@ class _HomeCarouselState extends State<HomeCarousel> {
               ),
             ),
             child: Center(
-              child: Text(item.emoji, style: TextStyle(fontSize: 48.sp)),
+              child: Text(item.emoji, style: TextStyle(fontSize: 44.sp)),
             ),
           ),
         ],

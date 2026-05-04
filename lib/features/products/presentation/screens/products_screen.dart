@@ -78,7 +78,7 @@ class ProductsScreen extends StatelessWidget {
       child: Row(
         children: [
           Text(
-            '${state.productResponse?.data?.length ?? 0} Products',
+            "${state.productResponse?.data?.length ?? 0} Products",
             style: TextStyle(
               fontSize: 12.sp,
               color: AppConstants.textSecondary,
@@ -103,7 +103,7 @@ class ProductsScreen extends StatelessWidget {
                   ),
                   SizedBox(width: 4.w),
                   Text(
-                    'Filter',
+                    "Filter",
                     style: TextStyle(
                       fontSize: 11.sp,
                       color: AppConstants.textSecondary,
@@ -133,13 +133,9 @@ class ProductsScreen extends StatelessWidget {
         itemBuilder: (_, i) {
           final Data product = products[i];
           return ProductCard(
-            name: product.name ?? '',
-            price: double.tryParse(product.price ?? '0') ?? 0,
-            oldPrice: double.tryParse(product.price ?? '0') ?? 0,
-            rating: 0.0,
-            imageUrl: product.image != null
-                ? '${AppConstants.storageUrl}${product.image}'
-                : null,
+            name: product.name ?? "",
+            price: double.tryParse(product.price ?? "0") ?? 0,
+            imageUrl: product.image?.toString(),
             onTap: () => Navigator.pushNamed(
               context,
               Routes.productDetails,
@@ -157,7 +153,7 @@ class ProductsScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('⚠️', style: TextStyle(fontSize: 48.sp)),
+          Text("⚠️", style: TextStyle(fontSize: 48.sp)),
           SizedBox(height: 12.h),
           Text(
             AppConstants.somethingWentWrong,
@@ -176,10 +172,10 @@ class ProductsScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('📦', style: TextStyle(fontSize: 48.sp)),
+          Text("📦", style: TextStyle(fontSize: 48.sp)),
           SizedBox(height: 12.h),
           Text(
-            'No products found',
+            "No products found",
             style: TextStyle(
               fontSize: 14.sp,
               color: AppConstants.textSecondary,

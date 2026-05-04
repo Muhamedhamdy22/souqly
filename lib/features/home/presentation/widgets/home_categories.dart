@@ -3,43 +3,39 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:souqly/core/resources/constants_manager.dart';
 import 'package:souqly/core/routes_managers/routes.dart';
-import 'package:souqly/features/Auth/presentation/bloc/auth_state.dart';
-import 'package:souqly/features/home/data/models/HomeResponse.dart';
+import 'package:souqly/di.dart';
 import 'package:souqly/features/home/presentation/bloc/home_bloc.dart';
 import 'package:souqly/features/home/presentation/bloc/home_state.dart';
 
 class HomeCategories extends StatelessWidget {
   const HomeCategories({super.key});
 
+  // TODO: replace with real data from CategoriesCubit
+  static const List<Map<String, dynamic>> _mockCategories = [
+    {'name': 'Meat', 'emoji': '🥩', 'color': 0xFFFFF0E8},
+    {'name': 'Vegetables', 'emoji': '🥦', 'color': 0xFFE8F5E9},
+    {'name': 'Dairy', 'emoji': '🧀', 'color': 0xFFFFF8E1},
+    {'name': 'Seafood', 'emoji': '🐟', 'color': 0xFFE3F2FD},
+    {'name': 'Fruits', 'emoji': '🍎', 'color': 0xFFFCE4EC},
+    {'name': 'Bakery', 'emoji': '🍞', 'color': 0xFFF3E5F5},
+  ];
+
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<HomeBloc, HomeState>(
-      listenWhen: (prev, curr) =>
-      curr.getCategoriesRequestStatus != prev.getCategoriesRequestStatus,
-      listener: (context, state) {
-        if (state.getCategoriesRequestStatus == RequestStatus.error) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.errorMessage ?? 'Something went wrong')),
+    return BlocProvider(
+      create: (context) => getIt<HomeBloc>(),
+      child: BlocConsumer<HomeBloc , HomeState>(
+        listener: (context, state) {},
+        builder: (context, state) {
+          return  Column(
+            children: [
+              _buildHeader(context),
+              SizedBox(height: 10.h),
+              _buildCategoryList(context),
+            ],
           );
-        }
-      },
-      buildWhen: (prev, curr) =>
-      curr.getCategoriesRequestStatus != prev.getCategoriesRequestStatus,
-      builder: (context, state) {
-        if (state.getCategoriesRequestStatus == RequestStatus.error) {
-          return const SizedBox.shrink();
-        }
-
-        final categories = state.categoriesModel?.data ?? [];
-
-        return Column(
-          children: [
-            _buildHeader(context),
-            SizedBox(height: 10.h),
-            _buildCategoryList(context, categories),
-          ],
-        );
-      },
+        },
+      ),
     );
   }
 
@@ -58,7 +54,9 @@ class HomeCategories extends StatelessWidget {
             ),
           ),
           GestureDetector(
-            onTap: () {/* TODO: go to categories tab */},
+            onTap: () {
+              /* TODO: go to categories tab */
+            },
             child: Text(
               AppConstants.seeAll,
               style: TextStyle(
@@ -73,22 +71,24 @@ class HomeCategories extends StatelessWidget {
     );
   }
 
-  Widget _buildCategoryList(BuildContext context, List<CategoryModel> categories) {
+  Widget _buildCategoryList(BuildContext context) {
     return SizedBox(
       height: 80.h,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(horizontal: 16.w),
-        itemCount: categories.length,
+        itemCount: _mockCategories.length,
         separatorBuilder: (_, __) => SizedBox(width: 12.w),
         itemBuilder: (_, i) => _CategoryItem(
-          category: categories[i],
+          name: _mockCategories[i]['name'],
+          emoji: _mockCategories[i]['emoji'],
+          bgColor: Color(_mockCategories[i]['color']),
           onTap: () => Navigator.pushNamed(
             context,
             Routes.productsScreenRoute,
             arguments: {
-              'catId': categories[i].id,
-              'catName': categories[i].name,
+              'catId': _mockCategories[i]['name'],
+              'catName': _mockCategories[i]['name'],
             },
           ),
         ),
@@ -98,10 +98,17 @@ class HomeCategories extends StatelessWidget {
 }
 
 class _CategoryItem extends StatelessWidget {
-  final CategoryModel category;
+  final String name;
+  final String emoji;
+  final Color bgColor;
   final VoidCallback onTap;
 
-  const _CategoryItem({required this.category, required this.onTap});
+  const _CategoryItem({
+    required this.name,
+    required this.emoji,
+    required this.bgColor,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -113,25 +120,16 @@ class _CategoryItem extends StatelessWidget {
             width: 52.w,
             height: 52.w,
             decoration: BoxDecoration(
-              color: AppConstants.primaryLight,
+              color: bgColor,
               borderRadius: BorderRadius.circular(14.r),
             ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(14.r),
-              child: Image.network(
-                '${AppConstants.baseUrl}${category.image ?? ''}',
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Icon(
-                  Icons.category_outlined,
-                  color: AppConstants.primaryColor,
-                  size: 24.sp,
-                ),
-              ),
+            child: Center(
+              child: Text(emoji, style: TextStyle(fontSize: 24.sp)),
             ),
           ),
           SizedBox(height: 5.h),
           Text(
-            category.name ?? '',
+            name,
             style: TextStyle(
               fontSize: 10.sp,
               color: AppConstants.textSecondary,

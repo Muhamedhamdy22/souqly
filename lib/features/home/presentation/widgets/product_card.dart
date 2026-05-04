@@ -55,20 +55,37 @@ class ProductCard extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12.r),
-        child: imageUrl != null
+        child: imageUrl != null && imageUrl!.isNotEmpty
             ? Image.network(
           imageUrl!,
           fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => Icon(
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return Center(
+              child: CircularProgressIndicator(
+                color: AppConstants.primaryColor,
+                strokeWidth: 2,
+                value: loadingProgress.expectedTotalBytes != null
+                    ? loadingProgress.cumulativeBytesLoaded /
+                    loadingProgress.expectedTotalBytes!
+                    : null,
+              ),
+            );
+          },
+          errorBuilder: (_, __, ___) => Center(
+            child: Icon(
+              Icons.image_not_supported_outlined,
+              color: AppConstants.textHint,
+              size: 30.sp,
+            ),
+          ),
+        )
+            : Center(
+          child: Icon(
             Icons.image_not_supported_outlined,
             color: AppConstants.textHint,
             size: 30.sp,
           ),
-        )
-            : Icon(
-          Icons.image_not_supported_outlined,
-          color: AppConstants.textHint,
-          size: 30.sp,
         ),
       ),
     );
@@ -89,7 +106,7 @@ class ProductCard extends StatelessWidget {
 
   Widget _buildPrice() {
     return Text(
-      '$price ${AppConstants.currency}',
+      '$price \${AppConstants.currency}',
       style: TextStyle(
         fontSize: 12.sp,
         fontWeight: FontWeight.w600,

@@ -1,9 +1,9 @@
-class CategoryResponse {
-  CategoryResponse({
-    this.data,
-    this.count,});
+class HomeResponse {
+  HomeResponse({
+      this.data, 
+      this.count,});
 
-  CategoryResponse.fromJson(dynamic json) {
+  HomeResponse.fromJson(dynamic json) {
     if (json['data'] != null) {
       data = [];
       json['data'].forEach((v) {
@@ -28,12 +28,12 @@ class CategoryResponse {
 
 class Data {
   Data({
-    this.id,
-    this.name,
-    this.description,
-    this.image,
-    this.createdAt,
-    this.updatedAt,});
+      this.id, 
+      this.name, 
+      this.description, 
+      this.image, 
+      this.createdAt, 
+      this.updatedAt,});
 
   Data.fromJson(dynamic json) {
     id = json['id'];

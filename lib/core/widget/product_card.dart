@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:souqly/core/resources/constants_manager.dart';
@@ -7,7 +8,7 @@ class ProductCard extends StatelessWidget {
   final num price;
   final num oldPrice;
   final double rating;
-  final String emoji;
+  final dynamic imageUrl;
   final VoidCallback onTap;
   final VoidCallback onAddToCart;
 
@@ -17,7 +18,7 @@ class ProductCard extends StatelessWidget {
     required this.price,
     required this.oldPrice,
     required this.rating,
-    required this.emoji,
+    required this.imageUrl,
     required this.onTap,
     required this.onAddToCart,
   });
@@ -57,8 +58,33 @@ class ProductCard extends StatelessWidget {
         color: AppConstants.scaffoldBg,
         borderRadius: BorderRadius.circular(12.r),
       ),
-      child: Center(
-        child: Text(emoji, style: TextStyle(fontSize: 40.sp)),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12.r),
+        child: imageUrl != null
+            ? CachedNetworkImage(
+          imageUrl: imageUrl.toString(),
+          fit: BoxFit.contain,
+          placeholder: (context, url) => Center(
+            child: CircularProgressIndicator(
+              color: AppConstants.primaryColor,
+              strokeWidth: 2,
+            ),
+          ),
+          errorWidget: (context, url, error) => Center(
+            child: Icon(
+              Icons.image_not_supported_outlined,
+              color: AppConstants.textHint,
+              size: 28.sp,
+            ),
+          ),
+        )
+            : Center(
+          child: Icon(
+            Icons.image_not_supported_outlined,
+            color: AppConstants.textHint,
+            size: 28.sp,
+          ),
+        ),
       ),
     );
   }
@@ -88,14 +114,15 @@ class ProductCard extends StatelessWidget {
           ),
         ),
         SizedBox(width: 6.w),
-        Text(
-          '$oldPrice ${AppConstants.currency}',
-          style: TextStyle(
-            fontSize: 10.sp,
-            color: AppConstants.textHint,
-            decoration: TextDecoration.lineThrough,
+        if (oldPrice > price)
+          Text(
+            '$oldPrice ${AppConstants.currency}',
+            style: TextStyle(
+              fontSize: 10.sp,
+              color: AppConstants.textHint,
+              decoration: TextDecoration.lineThrough,
+            ),
           ),
-        ),
       ],
     );
   }
@@ -109,7 +136,7 @@ class ProductCard extends StatelessWidget {
             Icon(Icons.star_rounded, color: AppConstants.starColor, size: 12.sp),
             SizedBox(width: 2.w),
             Text(
-              rating.toString(),
+              rating.toStringAsFixed(1),
               style: TextStyle(
                 fontSize: 10.sp,
                 color: AppConstants.textSecondary,

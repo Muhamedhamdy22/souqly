@@ -64,6 +64,7 @@ import 'package:souqly/features/auth/presentation/screens/sign_in_screen.dart';
 import 'package:souqly/features/auth/presentation/screens/sign_up_screen.dart';
 import 'package:souqly/features/main_layout/main_layout.dart';
 import 'package:souqly/features/product_details/presentation/screens/product_details_screen.dart';
+import 'package:souqly/features/products/data/models/ProductResponse.dart';
 import 'package:souqly/features/products/presentation/screens/products_screen.dart';
 // import 'package:souqly/features/cart/presentation/screens/cart_screen.dart';
 
@@ -89,7 +90,7 @@ class RouteGenerator {
 
       case Routes.productDetails:
         {
-          final product = settings.arguments as Map<String, dynamic>;
+          final product = settings.arguments as Data;
           return MaterialPageRoute(
             builder: (_) => ProductDetailsScreen(product: product),
           );

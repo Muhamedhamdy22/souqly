@@ -4,8 +4,13 @@ import 'package:souqly/core/resources/constants_manager.dart';
 
 class ProductDetailsBottomBar extends StatelessWidget {
   final VoidCallback onAddToCart;
+  final bool isLoading;
 
-  const ProductDetailsBottomBar({super.key, required this.onAddToCart});
+  const ProductDetailsBottomBar({
+    super.key,
+    required this.onAddToCart,
+    this.isLoading = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +29,7 @@ class ProductDetailsBottomBar extends StatelessWidget {
       child: Row(
         children: [
           GestureDetector(
-            onTap: () {/* TODO: add to wishlist */},
+            onTap: () {},
             child: Container(
               width: 50.w,
               height: 50.w,
@@ -42,31 +47,38 @@ class ProductDetailsBottomBar extends StatelessWidget {
           SizedBox(width: 12.w),
           Expanded(
             child: GestureDetector(
-              onTap: onAddToCart,
+              onTap: isLoading ? null : onAddToCart,
               child: Container(
                 height: 50.h,
                 decoration: BoxDecoration(
                   color: AppConstants.primaryColor,
                   borderRadius: BorderRadius.circular(14.r),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.shopping_cart_outlined,
-                      color: Colors.white,
-                      size: 20.sp,
-                    ),
-                    SizedBox(width: 8.w),
-                    Text(
-                      AppConstants.addToCart,
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w600,
+                child: Center(
+                  child: isLoading
+                      ? const CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 2,
+                  )
+                      : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.shopping_cart_outlined,
                         color: Colors.white,
+                        size: 20.sp,
                       ),
-                    ),
-                  ],
+                      SizedBox(width: 8.w),
+                      Text(
+                        AppConstants.addToCart,
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

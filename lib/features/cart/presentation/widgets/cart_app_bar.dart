@@ -3,7 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:souqly/core/resources/constants_manager.dart';
 
 class CartAppBar extends StatelessWidget {
-  const CartAppBar({super.key});
+  final VoidCallback onClearCart;
+
+  const CartAppBar({super.key, required this.onClearCart});
 
   @override
   Widget build(BuildContext context) {
@@ -21,33 +23,24 @@ class CartAppBar extends StatelessWidget {
                 color: const Color(0xFFF5F5F5),
                 borderRadius: BorderRadius.circular(10.r),
               ),
-              child: Icon(
-                Icons.arrow_back_ios_new_rounded,
-                size: 14.sp,
-                color: AppConstants.textPrimary,
-              ),
+              child: Icon(Icons.arrow_back_ios_new_rounded,
+                  size: 14.sp, color: AppConstants.textPrimary),
             ),
           ),
           SizedBox(width: 12.w),
-          Text(
-            AppConstants.cart,
-            style: TextStyle(
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w600,
-              color: AppConstants.textPrimary,
-            ),
-          ),
+          Text(AppConstants.cart,
+              style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w600,
+                  color: AppConstants.textPrimary)),
           const Spacer(),
           GestureDetector(
-            onTap: () {/* TODO: clear cart */},
-            child: Text(
-              AppConstants.delete,
-              style: TextStyle(
-                fontSize: 12.sp,
-                color: AppConstants.errorColor,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
+            onTap: onClearCart,
+            child: Text(AppConstants.delete,
+                style: TextStyle(
+                    fontSize: 12.sp,
+                    color: AppConstants.errorColor,
+                    fontWeight: FontWeight.w500)),
           ),
         ],
       ),

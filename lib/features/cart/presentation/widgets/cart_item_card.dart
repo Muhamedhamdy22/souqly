@@ -1,22 +1,18 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:souqly/core/resources/constants_manager.dart';
+import 'package:souqly/features/cart/data/models/CartResponse.dart';
 
 class CartItemCard extends StatelessWidget {
-  final String name;
-  final String emoji;
-  final num price;
-  final int quantity;
+  final CartItem item;
   final VoidCallback onIncrease;
   final VoidCallback onDecrease;
   final VoidCallback onDelete;
 
   const CartItemCard({
     super.key,
-    required this.name,
-    required this.emoji,
-    required this.price,
-    required this.quantity,
+    required this.item,
     required this.onIncrease,
     required this.onDecrease,
     required this.onDelete,
@@ -44,6 +40,7 @@ class CartItemCard extends StatelessWidget {
   }
 
   Widget _buildImage() {
+    final imageUrl = item.product?.image?.toString();
     return Container(
       width: 70.w,
       height: 70.w,
@@ -51,8 +48,29 @@ class CartItemCard extends StatelessWidget {
         color: AppConstants.scaffoldBg,
         borderRadius: BorderRadius.circular(12.r),
       ),
-      child: Center(
-        child: Text(emoji, style: TextStyle(fontSize: 36.sp)),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12.r),
+        child: imageUrl != null && imageUrl.isNotEmpty
+            ? CachedNetworkImage(
+          imageUrl: imageUrl,
+          fit: BoxFit.cover,
+          placeholder: (_, __) => Center(
+            child: CircularProgressIndicator(
+              color: AppConstants.primaryColor,
+              strokeWidth: 2,
+            ),
+          ),
+          errorWidget: (_, __, ___) => Icon(
+            Icons.image_not_supported_outlined,
+            color: AppConstants.textHint,
+            size: 24.sp,
+          ),
+        )
+            : Icon(
+          Icons.image_not_supported_outlined,
+          color: AppConstants.textHint,
+          size: 24.sp,
+        ),
       ),
     );
   }
@@ -62,7 +80,7 @@ class CartItemCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          name,
+          item.product?.name ?? '',
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
@@ -73,7 +91,7 @@ class CartItemCard extends StatelessWidget {
         ),
         SizedBox(height: 6.h),
         Text(
-          '$price ${AppConstants.currency}',
+          '${item.product?.price ?? '0'} ${AppConstants.currency}',
           style: TextStyle(
             fontSize: 14.sp,
             fontWeight: FontWeight.w700,
@@ -85,19 +103,12 @@ class CartItemCard extends StatelessWidget {
           onTap: onDelete,
           child: Row(
             children: [
-              Icon(
-                Icons.delete_outline_rounded,
-                size: 14.sp,
-                color: AppConstants.errorColor,
-              ),
+              Icon(Icons.delete_outline_rounded,
+                  size: 14.sp, color: AppConstants.errorColor),
               SizedBox(width: 3.w),
-              Text(
-                AppConstants.delete,
-                style: TextStyle(
-                  fontSize: 11.sp,
-                  color: AppConstants.errorColor,
-                ),
-              ),
+              Text(AppConstants.delete,
+                  style: TextStyle(
+                      fontSize: 11.sp, color: AppConstants.errorColor)),
             ],
           ),
         ),
@@ -108,26 +119,17 @@ class CartItemCard extends StatelessWidget {
   Widget _buildQuantityControls() {
     return Column(
       children: [
-        _QuantityBtn(
-          icon: Icons.add_rounded,
-          onTap: onIncrease,
-          isFilled: true,
-        ),
+        _QuantityBtn(icon: Icons.add_rounded, onTap: onIncrease, isFilled: true),
         SizedBox(height: 8.h),
         Text(
-          quantity.toString(),
+          '${item.quantity ?? 1}',
           style: TextStyle(
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w600,
-            color: AppConstants.textPrimary,
-          ),
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w600,
+              color: AppConstants.textPrimary),
         ),
         SizedBox(height: 8.h),
-        _QuantityBtn(
-          icon: Icons.remove_rounded,
-          onTap: onDecrease,
-          isFilled: false,
-        ),
+        _QuantityBtn(icon: Icons.remove_rounded, onTap: onDecrease, isFilled: false),
       ],
     );
   }
@@ -155,16 +157,12 @@ class _QuantityBtn extends StatelessWidget {
           color: isFilled ? AppConstants.primaryColor : AppConstants.cardBg,
           borderRadius: BorderRadius.circular(8.r),
           border: Border.all(
-            color: isFilled
-                ? AppConstants.primaryColor
-                : AppConstants.borderColor,
+            color: isFilled ? AppConstants.primaryColor : AppConstants.borderColor,
           ),
         ),
-        child: Icon(
-          icon,
-          size: 14.sp,
-          color: isFilled ? Colors.white : AppConstants.textPrimary,
-        ),
+        child: Icon(icon,
+            size: 14.sp,
+            color: isFilled ? Colors.white : AppConstants.textPrimary),
       ),
     );
   }

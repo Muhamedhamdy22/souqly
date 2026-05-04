@@ -9,9 +9,11 @@ import 'package:souqly/features/home/presentation/bloc/home_state.dart';
 @injectable
 class HomeBloc extends Bloc<HomeEvents, HomeState> {
   HomeUseCase homeUseCase;
+
   HomeBloc(this.homeUseCase) : super(HomeState()) {
     on<GetCategories>(_getCategories);
     on<GetProducts>(_getProducts);
+    on<CarouselIndexChanged>(_onCarouselIndexChanged);
   }
 
   _getCategories(GetCategories event, Emitter<HomeState> emit) async {
@@ -23,10 +25,7 @@ class HomeBloc extends Bloc<HomeEvents, HomeState> {
         categoriesModel: response,
       ));
     } on BaseException catch (e) {
-      emit(state.copyWith(
-        getCategoriesRequestStatus: RequestStatus.error,
-        errorMessage: e.message,
-      ));
+      emit(state.copyWith(getCategoriesRequestStatus: RequestStatus.error, errorMessage: e.message));
     } catch (e) {
       emit(state.copyWith(getCategoriesRequestStatus: RequestStatus.error));
     }
@@ -41,12 +40,13 @@ class HomeBloc extends Bloc<HomeEvents, HomeState> {
         productsModel: response,
       ));
     } on BaseException catch (e) {
-      emit(state.copyWith(
-        getProductsRequestStatus: RequestStatus.error,
-        errorMessage: e.message,
-      ));
+      emit(state.copyWith(getProductsRequestStatus: RequestStatus.error, errorMessage: e.message));
     } catch (e) {
       emit(state.copyWith(getProductsRequestStatus: RequestStatus.error));
     }
+  }
+
+  _onCarouselIndexChanged(CarouselIndexChanged event, Emitter<HomeState> emit) {
+    emit(state.copyWith(carouselIndex: event.index));
   }
 }

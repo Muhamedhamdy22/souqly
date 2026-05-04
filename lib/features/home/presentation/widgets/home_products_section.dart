@@ -3,60 +3,25 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:souqly/core/resources/constants_manager.dart';
 import 'package:souqly/core/widget/product_card.dart';
-import 'package:souqly/di.dart';
+import 'package:souqly/features/Auth/presentation/bloc/auth_state.dart';
 import 'package:souqly/features/home/presentation/bloc/home_bloc.dart';
-import 'package:souqly/features/home/presentation/bloc/home_events.dart';
 import 'package:souqly/features/home/presentation/bloc/home_state.dart';
 
 class HomeProductsSection extends StatelessWidget {
   const HomeProductsSection({super.key});
-  static const List<Map<String, dynamic>> _mockProducts = [
-    {
-      'name': 'Fresh Beef 500g',
-      'price': 85,
-      'oldPrice': 120,
-      'rating': 4.8,
-      'emoji': '🥩',
-    },
-    {
-      'name': 'Fresh Milk 1L',
-      'price': 35,
-      'oldPrice': 45,
-      'rating': 4.5,
-      'emoji': '🥛',
-    },
-    {
-      'name': 'Red Apples 1kg',
-      'price': 45,
-      'oldPrice': 60,
-      'rating': 4.7,
-      'emoji': '🍎',
-    },
-    {
-      'name': 'Cheddar 200g',
-      'price': 65,
-      'oldPrice': 80,
-      'rating': 4.6,
-      'emoji': '🧀',
-    },
-  ];
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => getIt<HomeBloc>(),
-      child: BlocConsumer<HomeBloc , HomeState>(
-        listener: (context, state) {},
-        builder: (context, state) {
-          return Column(
-            children: [
-              _buildHeader(),
-              SizedBox(height: 10.h),
-              _buildProductGrid(context),
-            ],
-          );
-        },
-      ),
+    return BlocBuilder<HomeBloc, HomeState>(
+      builder: (context, state) {
+        return Column(
+          children: [
+            _buildHeader(),
+            SizedBox(height: 10.h),
+            _buildProductGrid(context, state),
+          ],
+        );
+      },
     );
   }
 
@@ -66,31 +31,32 @@ class HomeProductsSection extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            AppConstants.featuredProducts,
-            style: TextStyle(
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w600,
-              color: AppConstants.textPrimary,
-            ),
-          ),
+          Text(AppConstants.featuredProducts,
+              style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600, color: AppConstants.textPrimary)),
           GestureDetector(
             onTap: () {/* TODO: see all products */},
-            child: Text(
-              AppConstants.seeAll,
-              style: TextStyle(
-                fontSize: 12.sp,
-                color: AppConstants.primaryColor,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
+            child: Text(AppConstants.seeAll,
+                style: TextStyle(fontSize: 12.sp, color: AppConstants.primaryColor, fontWeight: FontWeight.w500)),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildProductGrid(BuildContext context) {
+  Widget _buildProductGrid(BuildContext context, HomeState state) {
+    if (state.getProductsRequestStatus == RequestStatus.loading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    final products = state.productsModel?.data ?? [];
+
+    if (products.isEmpty) {
+      return Center(
+        child: Text('No products found',
+            style: TextStyle(fontSize: 12.sp, color: AppConstants.textSecondary)),
+      );
+    }
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: GridView.builder(
@@ -102,16 +68,17 @@ class HomeProductsSection extends StatelessWidget {
           mainAxisSpacing: 10.h,
           childAspectRatio: 0.75,
         ),
-        itemCount: _mockProducts.length,
-        itemBuilder: (_, i) => ProductCard(
-          name: _mockProducts[i]['name'],
-          price: _mockProducts[i]['price'],
-          oldPrice: _mockProducts[i]['oldPrice'],
-          rating: _mockProducts[i]['rating'],
-          imageUrl: null,
-          onTap: () {/* TODO: navigate to product details */},
-          onAddToCart: () {/* TODO: context.read<CartCubit>().addToCart(...) */},
-        ),
+        itemCount: products.length > 6 ? 6 : products.length,
+        itemBuilder: (_, i) {
+          final product = products[i];
+          return ProductCard(
+            name: product.name ?? '',
+            price: double.tryParse(product.price ?? '0') ?? 0,
+            imageUrl: product.image?.toString(),
+            onTap: () {/* TODO: navigate to product details */},
+            onAddToCart: () {/* TODO: add to cart */},
+          );
+        },
       ),
     );
   }

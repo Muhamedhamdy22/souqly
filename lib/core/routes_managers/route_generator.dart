@@ -6,20 +6,17 @@ import 'package:souqly/features/main_layout/main_layout.dart';
 import 'package:souqly/features/product_details/presentation/screens/product_details_screen.dart';
 import 'package:souqly/features/products/data/models/ProductResponse.dart';
 import 'package:souqly/features/products/presentation/screens/products_screen.dart';
-// import 'package:souqly/features/cart/presentation/screens/cart_screen.dart';
+import 'package:souqly/features/search/presentation/screens/search_screen.dart';
 
 class RouteGenerator {
   static Route<dynamic> getRoute(RouteSettings settings) {
     switch (settings.name) {
       case Routes.signInRoute:
         return MaterialPageRoute(builder: (_) => SignInScreen());
-
       case Routes.signUpRoute:
         return MaterialPageRoute(builder: (_) => SignUpScreen());
-
       case Routes.mainRoute:
         return MaterialPageRoute(builder: (_) => const MainLayout());
-
       case Routes.productsScreenRoute:
         {
           final args = settings.arguments as Map<String, String>;
@@ -30,7 +27,6 @@ class RouteGenerator {
             ),
           );
         }
-
       case Routes.productDetails:
         {
           final product = settings.arguments as Data;
@@ -38,11 +34,11 @@ class RouteGenerator {
             builder: (_) => ProductDetailsScreen(product: product),
           );
         }
-
+      case Routes.searchRoute:
+        return MaterialPageRoute(builder: (_) => const SearchScreen());
       case Routes.cartRoute:
       // return MaterialPageRoute(builder: (_) => const CartScreen());
         return unDefinedRoute();
-
       default:
         return unDefinedRoute();
     }
@@ -51,12 +47,8 @@ class RouteGenerator {
   static Route<dynamic> unDefinedRoute() {
     return MaterialPageRoute(
       builder: (_) => Scaffold(
-        appBar: AppBar(
-          title: const Text('No Route Found'),
-        ),
-        body: const Center(
-          child: Text('No Route Found'),
-        ),
+        appBar: AppBar(title: const Text('No Route Found')),
+        body: const Center(child: Text('No Route Found')),
       ),
     );
   }

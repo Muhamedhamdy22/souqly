@@ -4,9 +4,9 @@ import 'package:souqly/core/routes_managers/route_generator.dart';
 import 'package:souqly/core/routes_managers/routes.dart';
 import 'package:souqly/di.dart';
 
-void main() {
+void main() async{
   WidgetsFlutterBinding.ensureInitialized();
-  configureDependencies();
+  await  configureDependencies();
   runApp(const MainApp());
 }
 

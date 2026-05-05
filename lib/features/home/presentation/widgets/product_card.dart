@@ -66,26 +66,17 @@ class ProductCard extends StatelessWidget {
                 color: AppConstants.primaryColor,
                 strokeWidth: 2,
                 value: loadingProgress.expectedTotalBytes != null
-                    ? loadingProgress.cumulativeBytesLoaded /
-                    loadingProgress.expectedTotalBytes!
+                    ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
                     : null,
               ),
             );
           },
           errorBuilder: (_, __, ___) => Center(
-            child: Icon(
-              Icons.image_not_supported_outlined,
-              color: AppConstants.textHint,
-              size: 30.sp,
-            ),
+            child: Icon(Icons.image_not_supported_outlined, color: AppConstants.textHint, size: 30.sp),
           ),
         )
             : Center(
-          child: Icon(
-            Icons.image_not_supported_outlined,
-            color: AppConstants.textHint,
-            size: 30.sp,
-          ),
+          child: Icon(Icons.image_not_supported_outlined, color: AppConstants.textHint, size: 30.sp),
         ),
       ),
     );
@@ -96,22 +87,14 @@ class ProductCard extends StatelessWidget {
       name,
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
-      style: TextStyle(
-        fontSize: 11.sp,
-        fontWeight: FontWeight.w500,
-        color: AppConstants.textPrimary,
-      ),
+      style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w500, color: AppConstants.textPrimary),
     );
   }
 
   Widget _buildPrice() {
     return Text(
-      '$price \${AppConstants.currency}',
-      style: TextStyle(
-        fontSize: 12.sp,
-        fontWeight: FontWeight.w600,
-        color: AppConstants.primaryColor,
-      ),
+      '$price ${AppConstants.currency}',
+      style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w600, color: AppConstants.primaryColor),
     );
   }
 
@@ -123,10 +106,7 @@ class ProductCard extends StatelessWidget {
         child: Container(
           width: 26.w,
           height: 26.w,
-          decoration: BoxDecoration(
-            color: AppConstants.primaryColor,
-            borderRadius: BorderRadius.circular(8.r),
-          ),
+          decoration: BoxDecoration(color: AppConstants.primaryColor, borderRadius: BorderRadius.circular(8.r)),
           child: Icon(Icons.add_rounded, color: Colors.white, size: 16.sp),
         ),
       ),

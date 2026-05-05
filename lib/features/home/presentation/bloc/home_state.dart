@@ -7,6 +7,7 @@ class HomeState {
   CategoriesResponse? categoriesModel;
   ProductsResponse? productsModel;
   String? errorMessage;
+  int? carouselIndex;
 
   HomeState({
     this.getCategoriesRequestStatus = RequestStatus.init,
@@ -14,6 +15,7 @@ class HomeState {
     this.categoriesModel,
     this.productsModel,
     this.errorMessage,
+    this.carouselIndex = 0,
   });
 
   HomeState copyWith({
@@ -22,6 +24,7 @@ class HomeState {
     CategoriesResponse? categoriesModel,
     ProductsResponse? productsModel,
     String? errorMessage,
+    int? carouselIndex,
   }) {
     return HomeState(
       getCategoriesRequestStatus: getCategoriesRequestStatus ?? this.getCategoriesRequestStatus,
@@ -29,6 +32,7 @@ class HomeState {
       categoriesModel: categoriesModel ?? this.categoriesModel,
       productsModel: productsModel ?? this.productsModel,
       errorMessage: errorMessage ?? this.errorMessage,
+      carouselIndex: carouselIndex ?? this.carouselIndex,
     );
   }
 }

@@ -46,6 +46,12 @@ import 'features/products/data/repo/Product_repo_impl.dart' as _i833;
 import 'features/products/domain/repo/product_repo.dart' as _i221;
 import 'features/products/domain/usecase/product_use_case.dart' as _i587;
 import 'features/products/presentation/bloc/product_bloc.dart' as _i276;
+import 'features/profile/data/datasource/profile_ds.dart' as _i922;
+import 'features/profile/data/datasource/profile_ds_impl.dart' as _i543;
+import 'features/profile/data/repo/profile_repo_impl.dart' as _i475;
+import 'features/profile/domain/repo/repo.dart' as _i989;
+import 'features/profile/domain/usecase/profile_usecase.dart' as _i751;
+import 'features/profile/presentation/bloc/profile_bloc.dart' as _i284;
 import 'features/search/presentation/bloc/search_bloc.dart' as _i944;
 
 extension GetItInjectableX on _i174.GetIt {
@@ -79,6 +85,10 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i1031.CategoryRepo>(
         () => _i950.CategoryRepoImpl(gh<_i568.CategoryDs>()));
     gh.factory<_i738.HomeRepo>(() => _i516.HomeRepoImpl(gh<_i629.HomeDs>()));
+    gh.factory<_i922.ProfileDs>(() => _i543.ProfileDsImpl(
+          gh<_i795.ApiManager>(),
+          gh<_i891.CacheHelper>(),
+        ));
     gh.factory<_i284.CartDs>(() => _i733.CartDsImpl(
           gh<_i795.ApiManager>(),
           gh<_i891.CacheHelper>(),
@@ -98,6 +108,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i276.ProductBloc(gh<_i587.ProductUseCase>()));
     gh.factory<_i529.CartUseCase>(
         () => _i529.CartUseCase(gh<_i411.CartRepo>()));
+    gh.factory<_i989.ProfileRepo>(
+        () => _i475.ProfileRepoImpl(gh<_i922.ProfileDs>()));
     gh.factory<_i123.HomeBloc>(() => _i123.HomeBloc(gh<_i445.HomeUseCase>()));
     gh.factory<_i944.SearchBloc>(
         () => _i944.SearchBloc(gh<_i445.HomeUseCase>()));
@@ -108,6 +120,10 @@ extension GetItInjectableX on _i174.GetIt {
         ));
     gh.factory<_i2.CategoryBloc>(
         () => _i2.CategoryBloc(gh<_i559.CategoryUseCase>()));
+    gh.factory<_i751.ProfileUseCase>(
+        () => _i751.ProfileUseCase(gh<_i989.ProfileRepo>()));
+    gh.factory<_i284.ProfileBloc>(
+        () => _i284.ProfileBloc(gh<_i751.ProfileUseCase>()));
     return this;
   }
 }

@@ -4,4 +4,6 @@ class EndPoint {
   static const String categories = "/categories";
   static const String products = "/products";
   static const String cart = "/cart";
+  static const String me = "/user";
+  static const String logout = "/auth/logout";
 }

@@ -6,8 +6,8 @@ import 'package:souqly/core/resources/constants_manager.dart';
 class ProductCard extends StatelessWidget {
   final String name;
   final num price;
-  final num oldPrice;
-  final double rating;
+  final num? oldPrice;
+  final double? rating;
   final dynamic imageUrl;
   final VoidCallback onTap;
   final VoidCallback onAddToCart;
@@ -16,11 +16,11 @@ class ProductCard extends StatelessWidget {
     super.key,
     required this.name,
     required this.price,
-    required this.oldPrice,
-    required this.rating,
-    required this.imageUrl,
     required this.onTap,
     required this.onAddToCart,
+    this.oldPrice,
+    this.rating,
+    this.imageUrl,
   });
 
   @override
@@ -41,7 +41,7 @@ class ProductCard extends StatelessWidget {
             SizedBox(height: 8.h),
             _buildName(),
             SizedBox(height: 4.h),
-            _buildPriceRow(),
+            _buildPrice(),
             SizedBox(height: 6.h),
             _buildFooter(),
           ],
@@ -102,28 +102,14 @@ class ProductCard extends StatelessWidget {
     );
   }
 
-  Widget _buildPriceRow() {
-    return Row(
-      children: [
-        Text(
-          '$price ${AppConstants.currency}',
-          style: TextStyle(
-            fontSize: 12.sp,
-            fontWeight: FontWeight.w600,
-            color: AppConstants.primaryColor,
-          ),
-        ),
-        SizedBox(width: 6.w),
-        if (oldPrice > price)
-          Text(
-            '$oldPrice ${AppConstants.currency}',
-            style: TextStyle(
-              fontSize: 10.sp,
-              color: AppConstants.textHint,
-              decoration: TextDecoration.lineThrough,
-            ),
-          ),
-      ],
+  Widget _buildPrice() {
+    return Text(
+      '$price ${AppConstants.currency}',
+      style: TextStyle(
+        fontSize: 12.sp,
+        fontWeight: FontWeight.w600,
+        color: AppConstants.primaryColor,
+      ),
     );
   }
 
@@ -136,7 +122,7 @@ class ProductCard extends StatelessWidget {
             Icon(Icons.star_rounded, color: AppConstants.starColor, size: 12.sp),
             SizedBox(width: 2.w),
             Text(
-              rating.toStringAsFixed(1),
+              rating != null ? rating!.toStringAsFixed(1) : '0.0',
               style: TextStyle(
                 fontSize: 10.sp,
                 color: AppConstants.textSecondary,

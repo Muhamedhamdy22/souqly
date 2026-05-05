@@ -3,43 +3,60 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:souqly/core/resources/constants_manager.dart';
 import 'package:souqly/core/widget/product_card.dart';
-import 'package:souqly/features/Auth/presentation/bloc/auth_state.dart';
-import 'package:souqly/features/home/data/models/HomeResponse.dart';
+import 'package:souqly/di.dart';
 import 'package:souqly/features/home/presentation/bloc/home_bloc.dart';
+import 'package:souqly/features/home/presentation/bloc/home_events.dart';
 import 'package:souqly/features/home/presentation/bloc/home_state.dart';
 
 class HomeProductsSection extends StatelessWidget {
   const HomeProductsSection({super.key});
+  static const List<Map<String, dynamic>> _mockProducts = [
+    {
+      'name': 'Fresh Beef 500g',
+      'price': 85,
+      'oldPrice': 120,
+      'rating': 4.8,
+      'emoji': '🥩',
+    },
+    {
+      'name': 'Fresh Milk 1L',
+      'price': 35,
+      'oldPrice': 45,
+      'rating': 4.5,
+      'emoji': '🥛',
+    },
+    {
+      'name': 'Red Apples 1kg',
+      'price': 45,
+      'oldPrice': 60,
+      'rating': 4.7,
+      'emoji': '🍎',
+    },
+    {
+      'name': 'Cheddar 200g',
+      'price': 65,
+      'oldPrice': 80,
+      'rating': 4.6,
+      'emoji': '🧀',
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<HomeBloc, HomeState>(
-      listenWhen: (prev, curr) =>
-      curr.getProductsRequestStatus != prev.getProductsRequestStatus,
-      listener: (context, state) {
-        if (state.getProductsRequestStatus == RequestStatus.error) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.errorMessage ?? 'Something went wrong')),
+    return BlocProvider(
+      create: (context) => getIt<HomeBloc>(),
+      child: BlocConsumer<HomeBloc , HomeState>(
+        listener: (context, state) {},
+        builder: (context, state) {
+          return Column(
+            children: [
+              _buildHeader(),
+              SizedBox(height: 10.h),
+              _buildProductGrid(context),
+            ],
           );
-        }
-      },
-      buildWhen: (prev, curr) =>
-      curr.getProductsRequestStatus != prev.getProductsRequestStatus,
-      builder: (context, state) {
-        if (state.getProductsRequestStatus == RequestStatus.error) {
-          return const SizedBox.shrink();
-        }
-
-        final products = state.productsModel?.data ?? [];
-
-        return Column(
-          children: [
-            _buildHeader(),
-            SizedBox(height: 10.h),
-            _buildProductGrid(context, products),
-          ],
-        );
-      },
+        },
+      ),
     );
   }
 
@@ -73,7 +90,7 @@ class HomeProductsSection extends StatelessWidget {
     );
   }
 
-  Widget _buildProductGrid(BuildContext context, List<ProductModel> products) {
+  Widget _buildProductGrid(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: GridView.builder(
@@ -85,17 +102,15 @@ class HomeProductsSection extends StatelessWidget {
           mainAxisSpacing: 10.h,
           childAspectRatio: 0.75,
         ),
-        itemCount: products.length,
+        itemCount: _mockProducts.length,
         itemBuilder: (_, i) => ProductCard(
-          name: products[i].name ?? '',
-          price: double.tryParse(products[i].price ?? '0') ?? 0,
-          oldPrice: double.tryParse(products[i].price ?? '0') ?? 0,
-          rating: double.tryParse(products[i].price ?? '0') ?? 0,
-          imageUrl: products[i].image != null
-              ? '${AppConstants.baseUrl}${products[i].image}'
-              : null,
+          name: _mockProducts[i]['name'],
+          price: _mockProducts[i]['price'],
+          oldPrice: _mockProducts[i]['oldPrice'],
+          rating: _mockProducts[i]['rating'],
+          imageUrl: null,
           onTap: () {/* TODO: navigate to product details */},
-          onAddToCart: () {/* TODO: add to cart */},
+          onAddToCart: () {/* TODO: context.read<CartCubit>().addToCart(...) */},
         ),
       ),
     );

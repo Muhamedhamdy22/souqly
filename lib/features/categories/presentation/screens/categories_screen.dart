@@ -14,6 +14,7 @@ import 'package:souqly/features/categories/presentation/widgets/category_card.da
 
 class CategoriesScreen extends StatelessWidget {
   const CategoriesScreen({super.key});
+
   static const List<Color> _bgColors = [
     Color(0xFFFFF0E8),
     Color(0xFFE8F5E9),
@@ -120,22 +121,27 @@ class CategoriesScreen extends StatelessWidget {
     return GridView.builder(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
+        crossAxisCount: 2,
         crossAxisSpacing: 10.w,
         mainAxisSpacing: 10.h,
-        childAspectRatio: 0.9,
+          childAspectRatio: 2.2,
       ),
       itemCount: categories.length,
       itemBuilder: (_, i) {
         final Data category = categories[i];
         return CategoryCard(
           name: category.name ?? '',
-          imageUrl: category.image,
+          imageUrl: category.image != null
+              ? '${AppConstants.storageUrl}${category.image}'
+              : null,
           bgColor: _bgColors[i % _bgColors.length],
           onTap: () => Navigator.pushNamed(
             context,
             Routes.productsScreenRoute,
-            arguments: category.id.toString(),
+            arguments: {
+              'catId': category.id.toString(),
+              'catName': category.name ?? '',
+            },
           ),
         );
       },

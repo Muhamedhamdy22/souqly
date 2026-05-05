@@ -16,8 +16,13 @@ import 'package:souqly/features/products/presentation/widgets/products_filter_ba
 
 class ProductsScreen extends StatelessWidget {
   final String catId;
+  final String catName;
 
-  const ProductsScreen({super.key, required this.catId});
+  const ProductsScreen({
+    super.key,
+    required this.catId,
+    required this.catName,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +44,7 @@ class ProductsScreen extends StatelessWidget {
               body: SafeArea(
                 child: Column(
                   children: [
-                    ProductsAppBar(categoryName: catId),
+                    ProductsAppBar(categoryName: catName),
                     SizedBox(height: 12.h),
                     const ProductsFilterBar(),
                     SizedBox(height: 14.h),
@@ -81,10 +86,9 @@ class ProductsScreen extends StatelessWidget {
           ),
           const Spacer(),
           GestureDetector(
-            onTap: () {/* TODO: open sort/filter */},
+            onTap: () {},
             child: Container(
-              padding:
-              EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
               decoration: BoxDecoration(
                 color: AppConstants.cardBg,
                 borderRadius: BorderRadius.circular(8.r),
@@ -133,15 +137,15 @@ class ProductsScreen extends StatelessWidget {
             price: double.tryParse(product.price ?? '0') ?? 0,
             oldPrice: double.tryParse(product.price ?? '0') ?? 0,
             rating: 0.0,
-            imageUrl: product.image,
+            imageUrl: product.image != null
+                ? '${AppConstants.storageUrl}${product.image}'
+                : null,
             onTap: () => Navigator.pushNamed(
               context,
               Routes.productDetails,
               arguments: product,
             ),
-            onAddToCart: () {
-              // TODO: context.read<CartCubit>().addToCart(product)
-            },
+            onAddToCart: () {},
           );
         },
       ),

@@ -5,9 +5,7 @@ import 'package:souqly/core/resources/constants_manager.dart';
 class ProductCard extends StatelessWidget {
   final String name;
   final num price;
-  final num oldPrice;
-  final double rating;
-  final String emoji;
+  final String? imageUrl;
   final VoidCallback onTap;
   final VoidCallback onAddToCart;
 
@@ -15,11 +13,9 @@ class ProductCard extends StatelessWidget {
     super.key,
     required this.name,
     required this.price,
-    required this.oldPrice,
-    required this.rating,
-    required this.emoji,
     required this.onTap,
     required this.onAddToCart,
+    this.imageUrl,
   });
 
   @override
@@ -40,9 +36,9 @@ class ProductCard extends StatelessWidget {
             SizedBox(height: 8.h),
             _buildName(),
             SizedBox(height: 4.h),
-            _buildPriceRow(),
+            _buildPrice(),
             SizedBox(height: 6.h),
-            _buildFooter(),
+            _buildAddToCart(),
           ],
         ),
       ),
@@ -57,8 +53,23 @@ class ProductCard extends StatelessWidget {
         color: AppConstants.scaffoldBg,
         borderRadius: BorderRadius.circular(12.r),
       ),
-      child: Center(
-        child: Text(emoji, style: TextStyle(fontSize: 40.sp)),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12.r),
+        child: imageUrl != null
+            ? Image.network(
+          imageUrl!,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => Icon(
+            Icons.image_not_supported_outlined,
+            color: AppConstants.textHint,
+            size: 30.sp,
+          ),
+        )
+            : Icon(
+          Icons.image_not_supported_outlined,
+          color: AppConstants.textHint,
+          size: 30.sp,
+        ),
       ),
     );
   }
@@ -76,60 +87,32 @@ class ProductCard extends StatelessWidget {
     );
   }
 
-  Widget _buildPriceRow() {
-    return Row(
-      children: [
-        Text(
-          '$price ${AppConstants.currency}',
-          style: TextStyle(
-            fontSize: 12.sp,
-            fontWeight: FontWeight.w600,
-            color: AppConstants.primaryColor,
-          ),
-        ),
-        SizedBox(width: 6.w),
-        Text(
-          '$oldPrice ${AppConstants.currency}',
-          style: TextStyle(
-            fontSize: 10.sp,
-            color: AppConstants.textHint,
-            decoration: TextDecoration.lineThrough,
-          ),
-        ),
-      ],
+  Widget _buildPrice() {
+    return Text(
+      '$price ${AppConstants.currency}',
+      style: TextStyle(
+        fontSize: 12.sp,
+        fontWeight: FontWeight.w600,
+        color: AppConstants.primaryColor,
+      ),
     );
   }
 
-  Widget _buildFooter() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            Icon(Icons.star_rounded, color: AppConstants.starColor, size: 12.sp),
-            SizedBox(width: 2.w),
-            Text(
-              rating.toString(),
-              style: TextStyle(
-                fontSize: 10.sp,
-                color: AppConstants.textSecondary,
-              ),
-            ),
-          ],
-        ),
-        GestureDetector(
-          onTap: onAddToCart,
-          child: Container(
-            width: 26.w,
-            height: 26.w,
-            decoration: BoxDecoration(
-              color: AppConstants.primaryColor,
-              borderRadius: BorderRadius.circular(8.r),
-            ),
-            child: Icon(Icons.add_rounded, color: Colors.white, size: 16.sp),
+  Widget _buildAddToCart() {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: GestureDetector(
+        onTap: onAddToCart,
+        child: Container(
+          width: 26.w,
+          height: 26.w,
+          decoration: BoxDecoration(
+            color: AppConstants.primaryColor,
+            borderRadius: BorderRadius.circular(8.r),
           ),
+          child: Icon(Icons.add_rounded, color: Colors.white, size: 16.sp),
         ),
-      ],
+      ),
     );
   }
 }

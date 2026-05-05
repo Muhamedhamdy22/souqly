@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:souqly/core/resources/constants_manager.dart';
+import 'package:souqly/di.dart';
+import 'package:souqly/features/cart/presentation/bloc/cart_bloc.dart';
+import 'package:souqly/features/cart/presentation/bloc/cart_events.dart';
+import 'package:souqly/features/cart/presentation/bloc/cart_state.dart';
 import 'package:souqly/features/cart/presentation/widgets/cart_app_bar.dart';
 import 'package:souqly/features/cart/presentation/widgets/cart_item_card.dart';
 import 'package:souqly/features/cart/presentation/widgets/cart_summary.dart';
@@ -8,38 +13,70 @@ import 'package:souqly/features/cart/presentation/widgets/cart_summary.dart';
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
 
-  // TODO: replace with real data from CartCubit
-  static final List<Map<String, dynamic>> _mockCartItems = [
-    {'name': 'Fresh Beef 500g', 'emoji': '🥩', 'price': 85, 'quantity': 2},
-    {'name': 'Fresh Milk 1L', 'emoji': '🥛', 'price': 35, 'quantity': 1},
-    {'name': 'Red Apples 1kg', 'emoji': '🍎', 'price': 45, 'quantity': 3},
-  ];
-
-  num get _subtotal => _mockCartItems.fold(
-    0,
-        (sum, item) => sum + (item['price'] as num) * (item['quantity'] as int),
-  );
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppConstants.scaffoldBg,
-      body: SafeArea(
-        child: Column(
-          children: [
-            const CartAppBar(),
-            Expanded(
-              child: _mockCartItems.isEmpty
-                  ? _buildEmptyCart()
-                  : _buildCartList(),
-            ),
-            CartSummary(
-              subtotal: _subtotal,
-              onCheckout: () {
-                // TODO: context.read<OrderCubit>().placeOrder(...)
-              },
-            ),
-          ],
+    return BlocProvider(
+      create: (_) => getIt<CartBloc>()..add(GetCart()),
+      child: Scaffold(
+        backgroundColor: AppConstants.scaffoldBg,
+        body: SafeArea(
+          child: BlocBuilder<CartBloc, CartState>(
+            builder: (context, state) {
+              final items = state.cartResponse?.items ?? [];
+              final subtotal = double.tryParse(
+                  state.cartResponse?.total ?? '0') ?? 0;
+
+              return Column(
+                children: [
+                  CartAppBar(
+                    onClearCart: () =>
+                        context.read<CartBloc>().add(ClearCart()),
+                  ),
+                  Expanded(
+                    child: state.getCartStatus == CartStatus.loading
+                        ? const Center(child: CircularProgressIndicator())
+                        : items.isEmpty
+                        ? _buildEmptyCart()
+                        : ListView.separated(
+                      padding: EdgeInsets.all(16.w),
+                      itemCount: items.length,
+                      separatorBuilder: (_, __) =>
+                          SizedBox(height: 12.h),
+                      itemBuilder: (_, i) => CartItemCard(
+                        item: items[i],
+                        onIncrease: () => context
+                            .read<CartBloc>()
+                            .add(UpdateCartItem(
+                          items[i].id!,
+                          (items[i].quantity ?? 1) + 1,
+                        )),
+                        onDecrease: () {
+                          final qty = items[i].quantity ?? 1;
+                          if (qty > 1) {
+                            context.read<CartBloc>().add(
+                              UpdateCartItem(items[i].id!, qty - 1),
+                            );
+                          } else {
+                            context
+                                .read<CartBloc>()
+                                .add(RemoveCartItem(items[i].id!));
+                          }
+                        },
+                        onDelete: () => context
+                            .read<CartBloc>()
+                            .add(RemoveCartItem(items[i].id!)),
+                      ),
+                    ),
+                  ),
+                  if (items.isNotEmpty)
+                    CartSummary(
+                      subtotal: subtotal,
+                      onCheckout: () {},
+                    ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
@@ -52,40 +89,16 @@ class CartScreen extends StatelessWidget {
         children: [
           Text('🛒', style: TextStyle(fontSize: 64.sp)),
           SizedBox(height: 16.h),
-          Text(
-            AppConstants.emptyCart,
-            style: TextStyle(
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w600,
-              color: AppConstants.textPrimary,
-            ),
-          ),
+          Text(AppConstants.emptyCart,
+              style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w600,
+                  color: AppConstants.textPrimary)),
           SizedBox(height: 8.h),
-          Text(
-            'Add items to get started',
-            style: TextStyle(
-              fontSize: 13.sp,
-              color: AppConstants.textSecondary,
-            ),
-          ),
+          Text('Add items to get started',
+              style: TextStyle(
+                  fontSize: 13.sp, color: AppConstants.textSecondary)),
         ],
-      ),
-    );
-  }
-
-  Widget _buildCartList() {
-    return ListView.separated(
-      padding: EdgeInsets.all(16.w),
-      itemCount: _mockCartItems.length,
-      separatorBuilder: (_, __) => SizedBox(height: 12.h),
-      itemBuilder: (_, i) => CartItemCard(
-        name: _mockCartItems[i]['name'],
-        emoji: _mockCartItems[i]['emoji'],
-        price: _mockCartItems[i]['price'],
-        quantity: _mockCartItems[i]['quantity'],
-        onIncrease: () {/* TODO: CartCubit.increase() */},
-        onDecrease: () {/* TODO: CartCubit.decrease() */},
-        onDelete: () {/* TODO: CartCubit.remove() */},
       ),
     );
   }

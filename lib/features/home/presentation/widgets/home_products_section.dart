@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:souqly/core/resources/constants_manager.dart';
+import 'package:souqly/core/routes_managers/routes.dart';
 import 'package:souqly/core/widget/product_card.dart';
 import 'package:souqly/features/Auth/presentation/bloc/auth_state.dart';
 import 'package:souqly/features/home/presentation/bloc/home_bloc.dart';
 import 'package:souqly/features/home/presentation/bloc/home_state.dart';
+import 'package:souqly/features/products/data/models/ProductResponse.dart';
 
 class HomeProductsSection extends StatelessWidget {
   const HomeProductsSection({super.key});
@@ -32,11 +34,17 @@ class HomeProductsSection extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(AppConstants.featuredProducts,
-              style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600, color: AppConstants.textPrimary)),
+              style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
+                  color: AppConstants.textPrimary)),
           GestureDetector(
-            onTap: () {/* TODO: see all products */},
+            onTap: () {},
             child: Text(AppConstants.seeAll,
-                style: TextStyle(fontSize: 12.sp, color: AppConstants.primaryColor, fontWeight: FontWeight.w500)),
+                style: TextStyle(
+                    fontSize: 12.sp,
+                    color: AppConstants.primaryColor,
+                    fontWeight: FontWeight.w500)),
           ),
         ],
       ),
@@ -75,8 +83,20 @@ class HomeProductsSection extends StatelessWidget {
             name: product.name ?? '',
             price: double.tryParse(product.price ?? '0') ?? 0,
             imageUrl: product.image?.toString(),
-            onTap: () {/* TODO: navigate to product details */},
-            onAddToCart: () {/* TODO: add to cart */},
+            onTap: () {
+              final data = Data(
+                id: product.id,
+                name: product.name,
+                description: product.description,
+                price: product.price,
+                sku: product.sku,
+                categoryId: product.categoryId,
+                image: product.image,
+                isActive: product.isActive,
+              );
+              Navigator.pushNamed(context, Routes.productDetails, arguments: data);
+            },
+            onAddToCart: () {},
           );
         },
       ),

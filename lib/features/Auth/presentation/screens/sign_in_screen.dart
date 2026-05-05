@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:souqly/core/cache_helper/cache_helper.dart';
 import 'package:souqly/core/resources/constants_manager.dart';
 import 'package:souqly/core/widget/app_button.dart';
 import 'package:souqly/core/widget/app_social_button.dart';
@@ -27,8 +28,8 @@ class SignInScreen extends StatelessWidget {
       child: BlocProvider(
         create: (context) => getIt<AuthBloc>(),
         child: BlocConsumer<AuthBloc, AuthState>(
-          listener: (context, state) {
-            if(state.LoginRequestStatus == RequestStatus.error){
+          listener: (context, state) async {
+            if (state.LoginRequestStatus == RequestStatus.error) {
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
@@ -42,8 +43,15 @@ class SignInScreen extends StatelessWidget {
               context.loaderOverlay.hide();
             }
             if (state.LoginRequestStatus == RequestStatus.success) {
+              await getIt<CacheHelper>().setString(
+                "token",
+                state.LoginResponse?.token ?? "",
+              );
+              print("TOKEN SAVED: ${state.LoginResponse?.token}");
+              print("TOKEN FROM CACHE: ${getIt<CacheHelper>().getString("token")}");
               Navigator.pushNamedAndRemoveUntil(
-                  context, Routes.mainRoute, (route) => false);
+                context, Routes.mainRoute, (route) => false,
+              );
             }
           },
           builder: (context, state) {
@@ -55,8 +63,8 @@ class SignInScreen extends StatelessWidget {
                     children: [
                       const AuthHero(),
                       Padding(
-                        padding:
-                        EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 20.w, vertical: 24.h),
                         child: Form(
                           key: _formKey,
                           child: Column(
@@ -65,7 +73,6 @@ class SignInScreen extends StatelessWidget {
                               _buildHeading(),
                               SizedBox(height: 20.h),
                               AppTextField(
-      
                                 label: AppConstants.email,
                                 controller: emailController,
                                 hint: 'Enter your email',
@@ -102,7 +109,8 @@ class SignInScreen extends StatelessWidget {
                                   validator: (v) {
                                     if (v == null || v.isEmpty)
                                       return 'Password is required';
-                                    if (v.length < 6) return 'Minimum 6 characters';
+                                    if (v.length < 6)
+                                      return 'Minimum 6 characters';
                                     return null;
                                   },
                                 ),
@@ -118,7 +126,7 @@ class SignInScreen extends StatelessWidget {
                                       LoginEvent(
                                         emailController.text,
                                         passwordController.text,
-                                      )
+                                      ),
                                     );
                                   }
                                 },
@@ -169,9 +177,7 @@ class SignInScreen extends StatelessWidget {
     return Align(
       alignment: Alignment.centerRight,
       child: GestureDetector(
-        onTap: () {
-          /* TODO: forgot password */
-        },
+        onTap: () {},
         child: Text(
           AppConstants.forgotPassword,
           style: TextStyle(
@@ -207,18 +213,14 @@ class SignInScreen extends StatelessWidget {
           label: 'Google',
           color: const Color(0xFFEA4335),
           initial: 'G',
-          onTap: () {
-            /* TODO */
-          },
+          onTap: () {},
         ),
         SizedBox(width: 10.w),
         AppSocialButton(
           label: 'Facebook',
           color: const Color(0xFF1877F2),
           initial: 'f',
-          onTap: () {
-            /* TODO */
-          },
+          onTap: () {},
         ),
       ],
     );
@@ -231,8 +233,7 @@ class SignInScreen extends StatelessWidget {
         child: RichText(
           text: TextSpan(
             text: AppConstants.dontHaveAccount,
-            style:
-                TextStyle(fontSize: 13.sp, color: AppConstants.textSecondary),
+            style: TextStyle(fontSize: 13.sp, color: AppConstants.textSecondary),
             children: [
               TextSpan(
                 text: AppConstants.signUp,

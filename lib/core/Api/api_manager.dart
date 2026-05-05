@@ -16,23 +16,20 @@ class ApiManager {
         'Content-Type': 'application/json',
       },
     );
-    _dio.interceptors.add(PrettyDioLogger(
-
-    ));
+    _dio.interceptors.add(PrettyDioLogger());
   }
-
-
 
   Future<Response> get<T>({
     required String endpoint,
     Map<String, dynamic>? queryParameters,
     Map<String, dynamic>? headers,
+    Options? options,
   }) async {
     try {
       final response = await _dio.get(
         endpoint,
         queryParameters: queryParameters,
-        options: headers != null ? Options(headers: headers) : null,
+        options: options ?? (headers != null ? Options(headers: headers) : null),
       );
       return response;
     } on DioException catch (e) {
@@ -60,13 +57,45 @@ class ApiManager {
     }
   }
 
+  Future<Response> put<T>({
+    required String endpoint,
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+  }) async {
+    try {
+      final response = await _dio.put(
+        endpoint,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+      );
+      return response;
+    } on DioException catch (e) {
+      throw _handleDioError(e);
+    }
+  }
+
+  Future<Response> delete<T>({
+    required String endpoint,
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+  }) async {
+    try {
+      final response = await _dio.delete(
+        endpoint,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+      );
+      return response;
+    } on DioException catch (e) {
+      throw _handleDioError(e);
+    }
+  }
+
   Exception _handleDioError(DioException e) {
-    print('=== DIO ERROR DEBUG ===');
-    print('Type: ${e.type}');
-    print('Message: ${e.message}');
-    print('Error object: ${e.error}');
-    print('Error type: ${e.error.runtimeType}');
-    print('======================');
     switch (e.type) {
       case DioExceptionType.connectionTimeout:
         return Exception('Connection timeout');

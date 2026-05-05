@@ -19,48 +19,46 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LoaderOverlay(
-      child: BlocProvider(
-        create: (context) => getIt<HomeBloc>()
-          ..add(GetCategories())
-          ..add(GetProducts()),
-        child: BlocConsumer<HomeBloc, HomeState>(
-          listener: (context, state) {
-            final isLoading =
-                state.getCategoriesRequestStatus == RequestStatus.loading ||
-                    state.getProductsRequestStatus == RequestStatus.loading;
+    return BlocProvider(
+      create: (context) => getIt<HomeBloc>()
+        ..add(GetCategories())
+        ..add(GetProducts()),
+      child: BlocConsumer<HomeBloc, HomeState>(
+        listener: (context, state) {
+          final isLoading =
+              state.getCategoriesRequestStatus == RequestStatus.loading ||
+                  state.getProductsRequestStatus == RequestStatus.loading;
 
-            if (isLoading) {
-              context.loaderOverlay.show();
-            } else if (state.getCategoriesRequestStatus != RequestStatus.loading &&
-                state.getProductsRequestStatus != RequestStatus.loading) {
-              context.loaderOverlay.hide();
-            }
-          },
-          builder: (context, state) {
-            return Scaffold(
-              backgroundColor: AppConstants.scaffoldBg,
-              body: SafeArea(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const HomeAppBar(),
-                      const HomeSearchBar(),
-                      SizedBox(height: 12.h),
-                      const HomeCarousel(),
-                      SizedBox(height: 14.h),
-                      const HomeCategories(),
-                      SizedBox(height: 14.h),
-                      const HomeProductsSection(),
-                      SizedBox(height: 20.h),
-                    ],
-                  ),
+          if (isLoading) {
+            context.loaderOverlay.show();
+          } else if (state.getCategoriesRequestStatus != RequestStatus.loading &&
+              state.getProductsRequestStatus != RequestStatus.loading) {
+            context.loaderOverlay.hide();
+          }
+        },
+        builder: (context, state) {
+          return Scaffold(
+            backgroundColor: AppConstants.scaffoldBg,
+            body: SafeArea(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const HomeAppBar(),
+                    const HomeSearchBar(),
+                    SizedBox(height: 12.h),
+                    const HomeCarousel(),
+                    SizedBox(height: 14.h),
+                    const HomeCategories(),
+                    SizedBox(height: 14.h),
+                    const HomeProductsSection(),
+                    SizedBox(height: 20.h),
+                  ],
                 ),
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }

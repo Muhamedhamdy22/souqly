@@ -24,8 +24,10 @@ import 'features/Auth/domain/usecase/register_use_case.dart' as _i573;
 import 'features/Auth/presentation/bloc/auth_bloc.dart' as _i172;
 import 'features/cart/data/datasource/cart_ds.dart' as _i284;
 import 'features/cart/data/datasource/cart_ds_impl.dart' as _i733;
+import 'features/cart/data/repo/cart_repo_impl.dart' as _i858;
 import 'features/cart/domain/repo/cart_repo.dart' as _i411;
 import 'features/cart/domain/usecase/cart_usecase.dart' as _i529;
+import 'features/cart/presentation/bloc/cart_bloc.dart' as _i239;
 import 'features/categories/data/datasource/category_ds.dart' as _i568;
 import 'features/categories/data/datasource/category_ds_impl.dart' as _i33;
 import 'features/categories/data/repo/category_repo_impl.dart' as _i950;
@@ -70,8 +72,6 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i870.ProductDsImpl(gh<_i795.ApiManager>()));
     gh.factory<_i579.AuthDs>(() => _i971.AuthDsImpl(gh<_i795.ApiManager>()));
     gh.factory<_i943.AuthRepo>(() => _i899.AuthRepoImpl(gh<_i579.AuthDs>()));
-    gh.factory<_i529.CartUseCase>(
-        () => _i529.CartUseCase(gh<_i411.CartRepo>()));
     gh.factory<_i221.ProductRepo>(
         () => _i833.ProductRepoImpl(gh<_i751.ProductDs>()));
     gh.lazySingleton<_i891.CacheHelper>(
@@ -83,6 +83,7 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i795.ApiManager>(),
           gh<_i891.CacheHelper>(),
         ));
+    gh.factory<_i411.CartRepo>(() => _i858.CartRepoImpl(gh<_i284.CartDs>()));
     gh.factory<_i587.ProductUseCase>(
         () => _i587.ProductUseCase(gh<_i221.ProductRepo>()));
     gh.factory<_i495.LoginUseCase>(
@@ -95,9 +96,12 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i559.CategoryUseCase(gh<_i1031.CategoryRepo>()));
     gh.factory<_i276.ProductBloc>(
         () => _i276.ProductBloc(gh<_i587.ProductUseCase>()));
+    gh.factory<_i529.CartUseCase>(
+        () => _i529.CartUseCase(gh<_i411.CartRepo>()));
     gh.factory<_i123.HomeBloc>(() => _i123.HomeBloc(gh<_i445.HomeUseCase>()));
     gh.factory<_i944.SearchBloc>(
         () => _i944.SearchBloc(gh<_i445.HomeUseCase>()));
+    gh.factory<_i239.CartBloc>(() => _i239.CartBloc(gh<_i529.CartUseCase>()));
     gh.factory<_i172.AuthBloc>(() => _i172.AuthBloc(
           gh<_i495.LoginUseCase>(),
           gh<_i573.RegisterUseCase>(),

@@ -1,74 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:souqly/core/resources/constants_manager.dart';
+import 'package:souqly/di.dart';
+import 'package:souqly/features/orders/presentation/bloc/order_bloc.dart';
+import 'package:souqly/features/orders/presentation/bloc/order_events.dart';
+import 'package:souqly/features/orders/presentation/bloc/order_state.dart';
 import 'package:souqly/features/orders/presentation/widgets/order_card.dart';
 import 'package:souqly/features/orders/presentation/widgets/orders_app_bar.dart';
 
 class OrdersScreen extends StatelessWidget {
   const OrdersScreen({super.key});
 
-  // TODO: replace with real data from OrdersCubit
-  static const List<Map<String, dynamic>> _mockOrders = [
-    {
-      'orderId': '10234',
-      'date': 'May 1, 2026',
-      'total': 265,
-      'status': 'Delivered',
-      'emojis': ['🥩', '🥛', '🍎'],
-    },
-    {
-      'orderId': '10198',
-      'date': 'Apr 28, 2026',
-      'total': 130,
-      'status': 'Shipped',
-      'emojis': ['🧀', '🍗'],
-    },
-    {
-      'orderId': '10156',
-      'date': 'Apr 20, 2026',
-      'total': 95,
-      'status': 'Processing',
-      'emojis': ['🍊'],
-    },
-    {
-      'orderId': '10102',
-      'date': 'Apr 10, 2026',
-      'total': 320,
-      'status': 'Cancelled',
-      'emojis': ['🥩', '🥛'],
-    },
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppConstants.scaffoldBg,
-      body: SafeArea(
-        child: Column(
-          children: [
-            const OrdersAppBar(),
-            SizedBox(height: 8.h),
-            _buildFilterTabs(),
-            SizedBox(height: 12.h),
-            Expanded(
-              child: _mockOrders.isEmpty
-                  ? _buildEmptyOrders()
-                  : _buildOrdersList(),
-            ),
-          ],
+    return BlocProvider(
+      create: (_) => getIt<OrderBloc>()..add(GetOrders()),
+      child: Scaffold(
+        backgroundColor: AppConstants.scaffoldBg,
+        body: SafeArea(
+          child: BlocBuilder<OrderBloc, OrderState>(
+            builder: (context, state) {
+              return Column(
+                children: [
+                  const OrdersAppBar(),
+                  SizedBox(height: 8.h),
+                  _buildFilterTabs(),
+                  SizedBox(height: 12.h),
+                  Expanded(
+                    child: state.getOrdersStatus == OrderStatus.loading
+                        ? const Center(child: CircularProgressIndicator())
+                        : (state.ordersResponse?.data ?? []).isEmpty
+                        ? _buildEmptyOrders()
+                        : _buildOrdersList(state),
+                  ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
   }
 
   Widget _buildFilterTabs() {
-    final tabs = [
-      'All',
-      AppConstants.statusPending,
-      AppConstants.statusProcessing,
-      AppConstants.statusDelivered,
-    ];
-
+    final tabs = ['All', AppConstants.statusPending,
+      AppConstants.statusProcessing, AppConstants.statusDelivered];
     return SizedBox(
       height: 36.h,
       child: ListView.separated(
@@ -79,25 +56,32 @@ class OrdersScreen extends StatelessWidget {
         itemBuilder: (_, i) => _TabChip(
           label: tabs[i],
           isSelected: i == 0,
-          onTap: () {/* TODO: filter orders by status */},
+          onTap: () {},
         ),
       ),
     );
   }
 
-  Widget _buildOrdersList() {
+  Widget _buildOrdersList(OrderState state) {
+    final orders = state.ordersResponse?.data ?? [];
     return ListView.separated(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
-      itemCount: _mockOrders.length,
+      itemCount: orders.length,
       separatorBuilder: (_, __) => SizedBox(height: 12.h),
-      itemBuilder: (_, i) => OrderCard(
-        orderId: _mockOrders[i]['orderId'],
-        date: _mockOrders[i]['date'],
-        total: _mockOrders[i]['total'],
-        status: _mockOrders[i]['status'],
-        emojis: List<String>.from(_mockOrders[i]['emojis']),
-        onTap: () {/* TODO: navigate to order details */},
-      ),
+      itemBuilder: (_, i) {
+        final order = orders[i];
+        return OrderCard(
+          orderId: order.id.toString(),
+          date: order.createdAt?.substring(0, 10) ?? '',
+          total: double.tryParse(order.total ?? '0') ?? 0,
+          status: order.status ?? '',
+          emojis: order.items
+              ?.map((e) => '🛒')
+              .toList() ??
+              ['🛒'],
+          onTap: () {},
+        );
+      },
     );
   }
 
@@ -108,22 +92,15 @@ class OrdersScreen extends StatelessWidget {
         children: [
           Text('📦', style: TextStyle(fontSize: 64.sp)),
           SizedBox(height: 16.h),
-          Text(
-            'No orders yet',
-            style: TextStyle(
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w600,
-              color: AppConstants.textPrimary,
-            ),
-          ),
+          Text('No orders yet',
+              style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w600,
+                  color: AppConstants.textPrimary)),
           SizedBox(height: 8.h),
-          Text(
-            'Your orders will appear here',
-            style: TextStyle(
-              fontSize: 13.sp,
-              color: AppConstants.textSecondary,
-            ),
-          ),
+          Text('Your orders will appear here',
+              style: TextStyle(
+                  fontSize: 13.sp, color: AppConstants.textSecondary)),
         ],
       ),
     );
@@ -151,9 +128,7 @@ class _TabChip extends StatelessWidget {
           color: isSelected ? AppConstants.primaryColor : AppConstants.cardBg,
           borderRadius: BorderRadius.circular(20.r),
           border: Border.all(
-            color: isSelected
-                ? AppConstants.primaryColor
-                : AppConstants.borderColor,
+            color: isSelected ? AppConstants.primaryColor : AppConstants.borderColor,
           ),
         ),
         child: Text(

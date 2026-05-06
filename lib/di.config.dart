@@ -40,6 +40,12 @@ import 'features/home/data/repo/home_repo_impl.dart' as _i516;
 import 'features/home/domain/repo/home_repo.dart' as _i738;
 import 'features/home/domain/usecase/home_use_case.dart' as _i445;
 import 'features/home/presentation/bloc/home_bloc.dart' as _i123;
+import 'features/orders/data/datasourse/order_ds.dart' as _i724;
+import 'features/orders/data/datasourse/order_ds_impl.dart' as _i10;
+import 'features/orders/data/repo/order_repo_impl.dart' as _i943;
+import 'features/orders/domain/repo/order_repo.dart' as _i294;
+import 'features/orders/domain/usecase/order_use_case.dart' as _i416;
+import 'features/orders/presentation/bloc/order_bloc.dart' as _i947;
 import 'features/products/data/datasource/Product_ds.dart' as _i751;
 import 'features/products/data/datasource/product_ds_impl.dart' as _i870;
 import 'features/products/data/repo/Product_repo_impl.dart' as _i833;
@@ -82,6 +88,10 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i833.ProductRepoImpl(gh<_i751.ProductDs>()));
     gh.lazySingleton<_i891.CacheHelper>(
         () => _i891.CacheHelper(gh<_i460.SharedPreferences>()));
+    gh.factory<_i724.OrderDs>(() => _i10.OrderDsImpl(
+          gh<_i795.ApiManager>(),
+          gh<_i891.CacheHelper>(),
+        ));
     gh.factory<_i1031.CategoryRepo>(
         () => _i950.CategoryRepoImpl(gh<_i568.CategoryDs>()));
     gh.factory<_i738.HomeRepo>(() => _i516.HomeRepoImpl(gh<_i629.HomeDs>()));
@@ -94,8 +104,13 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i891.CacheHelper>(),
         ));
     gh.factory<_i411.CartRepo>(() => _i858.CartRepoImpl(gh<_i284.CartDs>()));
+    gh.factory<_i294.OrderRepo>(() => _i943.OrderRepoImpl(gh<_i724.OrderDs>()));
+    gh.factory<_i416.OrderUseCase>(
+        () => _i416.OrderUseCase(gh<_i294.OrderRepo>()));
     gh.factory<_i587.ProductUseCase>(
         () => _i587.ProductUseCase(gh<_i221.ProductRepo>()));
+    gh.factory<_i947.OrderBloc>(
+        () => _i947.OrderBloc(gh<_i416.OrderUseCase>()));
     gh.factory<_i495.LoginUseCase>(
         () => _i495.LoginUseCase(gh<_i943.AuthRepo>()));
     gh.factory<_i573.RegisterUseCase>(

@@ -54,7 +54,7 @@ lib/
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/your-username/souqly.git
+git clone https://github.com/Muhamedhamdy22/souqly.git
 
 # 2. Navigate to the project directory
 cd souqly
